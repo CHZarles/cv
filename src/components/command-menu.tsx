@@ -20,6 +20,7 @@ interface Props {
 export const CommandMenu = ({ links }: Props) => {
   const [open, setOpen] = React.useState(false);
   const [isMac, setIsMac] = React.useState(false);
+  const pdfUrl = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/resume.pdf`;
 
   React.useEffect(() => {
     setIsMac(window.navigator.userAgent.includes("Mac"));
@@ -60,7 +61,7 @@ export const CommandMenu = ({ links }: Props) => {
             <CommandItem
               onSelect={() => {
                 setOpen(false);
-                window.open("/resume.pdf", "_blank");
+                window.open(pdfUrl, "_blank");
               }}
             >
               <span>Open PDF</span>

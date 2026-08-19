@@ -1,0 +1,77 @@
+\documentclass[9pt,a4paper]{ctexart}
+\usepackage[margin=9mm]{geometry}
+\usepackage{enumitem,hyperref,tabularx,xcolor,titlesec}
+\usepackage{fontspec}
+
+\setmainfont{Helvetica Neue}
+\setCJKmainfont{STHeiti}
+\hypersetup{colorlinks=true,urlcolor=blue!65!black}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlist[itemize]{leftmargin=1.2em,itemsep=0pt,topsep=1pt,parsep=0pt,partopsep=0pt}
+\titleformat{\section}{\bfseries\fontsize{13}{14}\selectfont}{}{0pt}{}[\vspace{-2pt}\titlerule]
+\titlespacing*{\section}{0pt}{5pt}{3pt}
+\newcommand{\period}[1]{\hfill\textcolor{gray}{\small #1}}
+\newcommand{\tags}[1]{\textcolor{black!75}{\footnotesize #1}}
+\newcommand{\labelitem}[2]{\item \textbf{#1：}#2}
+
+\begin{document}
+\fontsize{9.2}{11.2}\selectfont
+
+\begin{tabularx}{\textwidth}{@{}Xr@{}}
+  {\fontsize{22}{24}\selectfont\bfseries CHZarles} &
+  \begin{tabular}{r}
+    \href{mailto:2538745263@qq.com}{2538745263@qq.com}\\
+    \href{tel:15697580245}{15697580245}\\
+    \href{https://github.com/CHZarles}{github.com/CHZarles}
+  \end{tabular}
+  \\
+  \textcolor{black!70}{中国} &
+\end{tabularx}
+
+\section*{工作经历}
+
+\textbf{瀚博半导体}\period{2022/07 -- 2025/07}\\[-1pt]
+\textbf{项目一：自研 NPU 高性能推理 SDK 与 Python 绑定开发}\\[-1pt]
+\tags{C++ \quad CMake \quad pybind11 \quad libgo \quad Lock-free Queue \quad RAII}
+\begin{itemize}
+  \labelitem{架构抽象与资源管控}{针对底层 C 运行时接口原始、易泄漏的问题，基于 CMake 构建统一的 C++ SDK；运用 RAII 机制与智能指针对模型生命周期、执行流上下文及 Tensor/Image Buffer 进行全局纳管，杜绝内存泄漏与异常崩溃。}
+  \labelitem{高并发异步推理管道}{设计同步/异步双模推理接口，引入无锁队列消除多线程数据争用，结合 libgo 协程封装底层异步回调与阻塞等待逻辑，提供高吞吐的 RunAsync 与结果消费 Poller 机制。}
+  \labelitem{跨语言无缝交付}{基于 pybind11 完成 C++ 核心类、数据结构及异常捕获到 Python 模块的映射，降低上层算法与应用工程师的接入门槛。}
+  \labelitem{商业级交付验证}{SDK 作为一体化解决方案的核心组件，成功交付至阿里云、小红书、高视科技等头部客户，并在内部压测及生产业务中持续稳定运行。}
+\end{itemize}
+
+\vspace{2pt}
+\textbf{瀚博半导体}\period{2022/07 -- 2025/07}\\[-1pt]
+\textbf{项目二：端到端 AI 业务管线构建}\\[-1pt]
+\tags{Python \quad C++ \quad MediaPipe \quad OpenCV \quad PyTorch \quad YOLOv8}
+\begin{itemize}
+  \labelitem{端到端算法流程落地}{负责目标检测（YOLOv8）、特征提取（ResNet）及多目标跟踪（ByteTrack）等算法在自研硬件上的全流程打通；基于 OpenCV、NumPy、LibTorch 编写高性能前后处理及 NPU 协同推理代码。}
+  \labelitem{复杂业务流编排}{深入 Google MediaPipe，根据业务需求开发多种 Calculator 节点，实现数据输入、前后处理、多模型串联推理及跟踪逻辑的计算图编排。}
+  \labelitem{环境容器化与部署标准化}{构建 Docker 镜像并收敛依赖，整合 NPU 运行时及 C++/Python 依赖；规范模型仓库挂载与数据卷映射，确保不同环境下一致、快速部署。}
+  \labelitem{工程文档与交付支持}{编写端到端调用范例与接入文档，协助业务团队及外部客户快速完成算法接入和问题排查。}
+\end{itemize}
+
+\section*{项目经历}
+
+\textbf{PaperLoom 论文智能阅读与可溯源问答系统}
+\quad\href{https://paperloom.me/}{paperloom.me}\\[-1pt]
+\tags{OpenAI Agents SDK \quad Java 17 / Spring Boot \quad Qdrant \quad MySQL \quad Kafka \quad MinIO \quad WebSocket}
+
+面向科研论文阅读场景开发 Agentic RAG 问答系统。采用 Java/Spring Boot（业务边界与数据权威）+ Python（Agent 运行时）分层架构，确保回答中的每一句论述均可回溯至原始 PDF 的页码、章节与段落。
+\begin{itemize}
+  \labelitem{Agent 工具链与引用防伪校验}{设计“候选检索 \(\rightarrow\) 原文精读 \(\rightarrow\) 引用生成 \(\rightarrow\) 最终提交”调用链；维护已读原文清单并以代码规则校验引用编号，从机制上杜绝虚假引用。}
+  \labelitem{数据分层与结构化建模}{对 PDF 解析产物进行领域建模，统一为带页码、章节层级、表格/图表及坐标的数据结构；以 Qdrant 导航候选位置、MySQL 提供权威原文。}
+  \labelitem{权限锁定与异步解析流水线}{以数据库锁固定会话论文范围；基于 Kafka、MinIO、MySQL 状态机构建分片上传、异步解析与向量索引流水线，通过唯一约束和条件更新保障幂等。}
+  \labelitem{流式交互与离线评测}{基于 Spring WebSocket 流式推送 Agent 思考过程、工具状态与答案，支持任务中断；搭建 Golden Cases，分层统计检索召回率、阅读覆盖率和引用准确率。}
+\end{itemize}
+
+\section*{教育经历}
+
+\begin{tabularx}{\textwidth}{@{}Xr@{}}
+  \textbf{澳门大学} \quad 人工智能 · 硕士 & \textcolor{gray}{2025/08 -- 2027/06}\\[2pt]
+  \textbf{中国矿业大学} \quad 计算机科学与技术 · 本科，GPA: 87/100，专业排名：26/139 & \textcolor{gray}{2018/09 -- 2022/07}
+\end{tabularx}
+
+\end{document}

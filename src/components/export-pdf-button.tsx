@@ -4,6 +4,8 @@ import { DownloadIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ExportPdfButton() {
+  const pdfUrl = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/resume.pdf`;
+
   return (
     <Button
       className="fixed bottom-4 left-4 z-50 gap-2 rounded-full shadow-2xl print:hidden"
@@ -11,7 +13,7 @@ export function ExportPdfButton() {
       aria-label="Export resume as PDF"
       asChild={true}
     >
-      <a href="/resume.pdf" download="CHZarles-resume.pdf">
+      <a href={pdfUrl} download="CHZarles-resume.pdf">
         <DownloadIcon className="size-4" aria-hidden="true" />
         Export PDF
       </a>

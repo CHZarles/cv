@@ -8,6 +8,7 @@ const nextConfig = {
   output: 'export',
   basePath,
   assetPrefix: basePath,
+  env: { NEXT_PUBLIC_BASE_PATH: basePath },
   trailingSlash: true,
 
   // Enable React strict mode for better development experience
