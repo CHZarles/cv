@@ -54,13 +54,13 @@ export const RESUME_DATA: ResumeData = {
     {
       company: "瀚博半导体",
       link: "https://www.vastai.com.cn/",
-      badges: ["Python", "C++", "MediaPipe", "OpenCV", "PyTorch", "YOLOv8"],
+      badges: ["Python", "C++", "MediaPipe", "OpenCV", "PyTorch", "BERT"],
       title: "项目二：端到端 AI 业务管线构建",
       start: "2022/07",
       end: "2025/07",
       description: "",
       highlights: [
-        "端到端算法流程落地：负责目标检测（YOLOv8）、特征提取（ResNet）及多目标跟踪（ByteTrack）等主流算法在自研硬件上的全流程打通；基于 OpenCV、NumPy、LibTorch 编写高性能前/后处理及 NPU 协同推理代码，确保业务链路闭环。",
+        "端到端算法流程落地：负责 Yolo 系列、ResNet 系列、BERT 等侧端小模型在自研硬件上的全流程打通；基于 OpenCV、NumPy、LibTorch 编写高性能前/后处理及 NPU 协同推理代码，确保业务链路闭环。",
         "复杂业务流编排（Pipeline）：深入 Google MediaPipe 框架，根据实际业务需求定制开发多种 Calculator 节点，实现数据输入、前后处理、多模型串联推理及跟踪逻辑的计算图（Graph）编排，提升管线复用性与执行效率。",
         "环境容器化与部署标准化：负责算法业务运行环境的 Docker 镜像构建与依赖收敛，整合 NPU 运行时、C++/Python 依赖库；设计标准化的模型仓库挂载与数据卷路径映射规范，解决复杂环境依赖冲突，确保算法管线在不同客户机房和内部测试环境中的一致性与快速部署。",
         "工程文档与交付支持：编写规范的端到端调用范例代码与接入文档，协助业务团队与外部客户快速完成算法接入与问题排查，保障多场景业务稳定交付。",
