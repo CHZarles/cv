@@ -12,10 +12,6 @@ interface BadgeListProps {
   badges: WorkBadges;
 }
 
-/**
- * Renders a list of badges for work experience
- * Handles both mobile and desktop layouts through className prop
- */
 function BadgeList({ className, badges }: BadgeListProps) {
   if (badges.length === 0) return null;
 
@@ -79,6 +75,24 @@ function CompanyLink({ company, link }: CompanyLinkProps) {
   );
 }
 
+function HighlightLabel({ text }: { text: string }) {
+  const separatorIndex = text.search(/[：:]/);
+
+  if (separatorIndex === -1) {
+    return text;
+  }
+
+  const label = text.slice(0, separatorIndex + 1);
+  const content = text.slice(separatorIndex + 1);
+
+  return (
+    <>
+      <strong className="font-semibold text-foreground">{label}</strong>
+      {content}
+    </>
+  );
+}
+
 interface WorkExperienceItemProps {
   work: WorkExperience;
 }
@@ -95,37 +109,30 @@ function WorkExperienceItem({ work }: WorkExperienceItemProps) {
     <Card className="border-none py-1 print:py-0">
       <CardHeader className="print:space-y-1">
         <div className="flex items-center justify-between gap-x-2 text-base">
-          <h3 className="inline-flex items-center justify-center gap-x-1 font-semibold leading-none print:text-sm">
+          <h3 className="inline-flex items-center justify-center gap-x-1 font-semibold leading-none">
             <CompanyLink company={company} link={link} />
-            <BadgeList
-              className="hidden gap-x-1 sm:inline-flex"
-              badges={badges}
-            />
           </h3>
           <WorkPeriod start={start} end={end} />
         </div>
 
-        <h4 className="font-mono text-sm font-semibold leading-none print:text-[12px]">
+        <h4 className="font-mono text-sm font-semibold leading-none">
           {title}
         </h4>
+        <BadgeList className="flex-wrap gap-1" badges={badges} />
       </CardHeader>
 
       <CardContent>
         <div className="mt-2 text-xs text-foreground/80 print:mt-1 print:text-[10px] text-pretty">
-          {description}
+          {description && <HighlightLabel text={description} />}
           {highlights && highlights.length > 0 && (
             <ul className="list-inside list-disc">
               {highlights.map((highlight) => (
-                <li key={highlight}>{highlight}</li>
+                <li key={highlight}>
+                  <HighlightLabel text={highlight} />
+                </li>
               ))}
             </ul>
           )}
-        </div>
-        <div className="mt-2">
-          <BadgeList
-            className="-mx-2 flex-wrap gap-1 sm:hidden"
-            badges={badges}
-          />
         </div>
       </CardContent>
     </Card>
@@ -147,12 +154,12 @@ export function WorkExperience({ work }: WorkExperienceProps) {
         Work Experience
       </h2>
       <div
-        className="space-y-4 print:space-y-0"
+        className="space-y-4 print:space-y-1"
         role="feed"
         aria-labelledby="work-experience"
       >
         {work.map((item) => (
-          <article key={`${item.company}-${item.start}`}>
+          <article key={`${item.company}-${item.title}-${item.start}`}>
             <WorkExperienceItem work={item} />
           </article>
         ))}

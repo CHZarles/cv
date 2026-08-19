@@ -1,4 +1,4 @@
-import { GlobeIcon, MailIcon, PhoneIcon } from "lucide-react";
+import { GlobeIcon, MailIcon, MapPinIcon, PhoneIcon } from "lucide-react";
 import type React from "react";
 import { Avatar } from "@/components/avatar";
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
@@ -35,7 +35,7 @@ function LocationLink({ location, locationLink }: LocationLinkProps) {
         rel="noopener noreferrer"
         aria-label={`Location: ${location}`}
       >
-        <GlobeIcon className="size-3" aria-hidden="true" />
+        <MapPinIcon className="size-3" aria-hidden="true" />
         {location}
       </a>
     </p>
@@ -116,45 +116,22 @@ function ContactButtons({ contact, personalWebsiteUrl }: ContactButtonsProps) {
   );
 }
 
-interface PrintContactProps {
-  contact: typeof RESUME_DATA.contact;
-  personalWebsiteUrl?: string;
-}
+function PrintContact() {
+  const { contact, personalWebsiteUrl } = RESUME_DATA;
 
-function PrintContact({ contact, personalWebsiteUrl }: PrintContactProps) {
   return (
-    <div className="hidden gap-x-2 font-mono text-sm text-foreground/80 print:flex print:text-[12px]">
+    <address className="hidden shrink-0 flex-col items-end gap-1 text-right font-mono text-xs not-italic text-foreground/80 print:flex">
+      {contact.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
+      {contact.tel && <a href={`tel:${contact.tel}`}>{contact.tel}</a>}
       {personalWebsiteUrl && (
-        <>
-          <a
-            className="underline hover:text-foreground/70"
-            href={personalWebsiteUrl}
-          >
-            {new URL(personalWebsiteUrl).hostname}
-          </a>
-          <span aria-hidden="true">/</span>
-        </>
+        <a href={personalWebsiteUrl}>{new URL(personalWebsiteUrl).host}</a>
       )}
-      {contact.email && (
-        <>
-          <a
-            className="underline hover:text-foreground/70"
-            href={`mailto:${contact.email}`}
-          >
-            {contact.email}
-          </a>
-          <span aria-hidden="true">/</span>
-        </>
-      )}
-      {contact.tel && (
-        <a
-          className="underline hover:text-foreground/70"
-          href={`tel:${contact.tel}`}
-        >
-          {contact.tel}
+      {contact.social.map((social) => (
+        <a href={social.url} key={social.name}>
+          {new URL(social.url).host + new URL(social.url).pathname}
         </a>
-      )}
-    </div>
+      ))}
+    </address>
   );
 }
 
@@ -168,32 +145,32 @@ export function Header() {
         <h1 className="text-3xl font-bold tracking-tight" id="resume-name">
           {RESUME_DATA.name}
         </h1>
-        <p className="max-w-md text-pretty font-mono text-sm text-foreground/80 print:text-[12px]">
-          {RESUME_DATA.about}
-        </p>
+        {RESUME_DATA.about && (
+          <p className="max-w-md text-pretty font-mono text-sm text-foreground/80">
+            {RESUME_DATA.about}
+          </p>
+        )}
 
-        <LocationLink
-          location={RESUME_DATA.location}
-          locationLink={RESUME_DATA.locationLink}
-        />
+        {RESUME_DATA.location && RESUME_DATA.locationLink && (
+          <LocationLink
+            location={RESUME_DATA.location}
+            locationLink={RESUME_DATA.locationLink}
+          />
+        )}
 
         <ContactButtons
-          contact={RESUME_DATA.contact}
-          personalWebsiteUrl={RESUME_DATA.personalWebsiteUrl}
-        />
-
-        <PrintContact
           contact={RESUME_DATA.contact}
           personalWebsiteUrl={RESUME_DATA.personalWebsiteUrl}
         />
       </div>
 
       <Avatar
-        className="size-28 ring-1 ring-muted"
+        className="size-28 ring-1 ring-muted print:hidden"
         src={RESUME_DATA.avatarUrl}
         alt={`${RESUME_DATA.name}'s profile picture`}
         fallback={RESUME_DATA.initials}
       />
+      <PrintContact />
     </header>
   );
 }

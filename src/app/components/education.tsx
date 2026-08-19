@@ -37,7 +37,7 @@ function EducationItem({ education }: EducationItemProps) {
   return (
     <Card className="border-none">
       <CardHeader>
-        <div className="flex items-center justify-between gap-x-2 text-base">
+        <div className="flex items-center justify-between gap-x-2 text-sm">
           <h3 className="font-semibold leading-none" id={schoolId}>
             {school}
           </h3>
@@ -45,7 +45,7 @@ function EducationItem({ education }: EducationItemProps) {
         </div>
       </CardHeader>
       <CardContent
-        className="mt-2 text-foreground/80 print:text-[12px]"
+        className="mt-2 text-xs text-foreground/80"
         aria-labelledby={schoolId}
       >
         {degree}

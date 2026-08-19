@@ -60,10 +60,10 @@ export const CommandMenu = ({ links }: Props) => {
             <CommandItem
               onSelect={() => {
                 setOpen(false);
-                window.print();
+                window.open("/resume.pdf", "_blank");
               }}
             >
-              <span>Print</span>
+              <span>Open PDF</span>
             </CommandItem>
           </CommandGroup>
           <CommandGroup heading="Links">

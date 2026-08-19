@@ -45,6 +45,7 @@ export interface ResumeData {
     title: string;
     techStack: string[];
     description: string;
+    highlights?: readonly string[];
     link?: {
       label: string;
       href: string;

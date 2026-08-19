@@ -1,11 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Section } from "@/components/ui/section";
 import type { RESUME_DATA } from "@/data/resume-data";
 
@@ -24,8 +18,13 @@ function ProjectLink({ title, link }: ProjectLinkProps) {
     return <span>{title}</span>;
   }
 
+  const displayUrl = link
+    .replace("https://", "")
+    .replace("www.", "")
+    .replace("/", "");
+
   return (
-    <>
+    <div className="space-y-1">
       <a
         href={link}
         target="_blank"
@@ -40,13 +39,15 @@ function ProjectLink({ title, link }: ProjectLinkProps) {
           aria-hidden="true"
         />
       </a>
-      <div
-        className="hidden font-mono text-xs underline print:visible"
-        aria-hidden="true"
+      <a
+        className="block font-mono text-xs font-medium text-blue-600 underline underline-offset-2 hover:text-blue-700"
+        href={link}
+        target="_blank"
+        rel="noopener noreferrer"
       >
-        {link.replace("https://", "").replace("www.", "").replace("/", "")}
-      </div>
-    </>
+        {`Live: ${displayUrl}`}
+      </a>
+    </div>
   );
 }
 
@@ -68,7 +69,7 @@ function ProjectTags({ tags }: ProjectTagsProps) {
       {tags.map((tag) => (
         <li key={tag}>
           <Badge
-            className="px-1 py-0 text-[10px] print:px-1 print:py-0.5 print:text-[8px] print:leading-tight"
+            className="px-1 py-0 text-[10px] print:py-0.5 print:text-[8px] print:leading-tight"
             variant="secondary"
           >
             {tag}
@@ -82,31 +83,62 @@ function ProjectTags({ tags }: ProjectTagsProps) {
 interface ProjectCardProps {
   title: string;
   description: string;
+  highlights?: readonly string[];
   tags: ProjectTags;
   link?: string;
+}
+
+function HighlightLabel({ text }: { text: string }) {
+  const separatorIndex = text.search(/[：:]/);
+
+  if (separatorIndex === -1) {
+    return text;
+  }
+
+  const label = text.slice(0, separatorIndex + 1);
+  const content = text.slice(separatorIndex + 1);
+
+  return (
+    <>
+      <strong className="font-semibold text-foreground">{label}</strong>
+      {content}
+    </>
+  );
 }
 
 /**
  * Card component displaying project information
  */
-function ProjectCard({ title, description, tags, link }: ProjectCardProps) {
+function ProjectCard({
+  title,
+  description,
+  highlights,
+  tags,
+  link,
+}: ProjectCardProps) {
   return (
-    <Card className="flex h-full flex-col overflow-hidden border p-3">
+    <Card className="border-none py-1 print:py-0">
       <CardHeader>
         <div className="space-y-1">
           <CardTitle className="text-base">
             <ProjectLink title={title} link={link} />
           </CardTitle>
-          <CardDescription
-            className="text-pretty font-mono text-xs print:text-[10px]"
-            aria-label="Project description"
-          >
-            {description}
-          </CardDescription>
+          <ProjectTags tags={tags} />
         </div>
       </CardHeader>
-      <CardContent className="mt-auto flex">
-        <ProjectTags tags={tags} />
+      <CardContent>
+        <div className="mt-2 text-xs text-foreground/80 print:mt-1 print:text-[10px] text-pretty">
+          <HighlightLabel text={description} />
+          {highlights && highlights.length > 0 && (
+            <ul className="list-inside list-disc">
+              {highlights.map((highlight) => (
+                <li key={highlight}>
+                  <HighlightLabel text={highlight} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
@@ -121,23 +153,21 @@ interface ProjectsProps {
  */
 export function Projects({ projects }: ProjectsProps) {
   return (
-    <Section className="scroll-mb-16 print:space-y-4">
+    <Section className="scroll-mb-16">
       <h2 className="text-xl font-bold" id="side-projects">
         Side projects
       </h2>
       <div
-        className="-mx-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 print:grid-cols-3 print:gap-2"
+        className="space-y-4 print:space-y-1"
         role="feed"
         aria-labelledby="side-projects"
       >
         {projects.map((project) => (
-          <article
-            key={project.title}
-            className="h-full transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm print:hover:translate-y-0 print:hover:shadow-none"
-          >
+          <article key={project.title}>
             <ProjectCard
               title={project.title}
               description={project.description}
+              highlights={project.highlights}
               tags={project.techStack}
               link={project.link?.href}
             />

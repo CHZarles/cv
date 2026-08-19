@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { CommandMenu } from "@/components/command-menu";
+import { ExportPdfButton } from "@/components/export-pdf-button";
 import { RESUME_DATA } from "@/data/resume-data";
 import { generateResumeStructuredData } from "@/lib/structured-data";
 import { Education } from "./components/education";
 import { Header } from "./components/header";
 import { Projects } from "./components/projects";
-import { Skills } from "./components/skills";
-import { Summary } from "./components/summary";
 import { WorkExperience } from "./components/work-experience";
 
 export const metadata: Metadata = {
@@ -17,20 +16,11 @@ export const metadata: Metadata = {
     description: RESUME_DATA.about,
     type: "profile",
     locale: "en_US",
-    images: [
-      {
-        url: "https://cv.jarocki.me/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: `${RESUME_DATA.name}'s profile picture`,
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: `${RESUME_DATA.name} - Resume`,
     description: RESUME_DATA.about,
-    images: ["https://cv.jarocki.me/opengraph-image"],
   },
 };
 
@@ -69,7 +59,7 @@ export default function ResumePage() {
         }}
       />
       <main
-        className="container relative mx-auto scroll-my-12 overflow-auto p-4 print:p-11 md:p-16"
+        className="container relative mx-auto scroll-my-12 overflow-auto p-4 print:p-0 md:p-16"
         id="main-content"
       >
         <div className="sr-only">
@@ -86,13 +76,13 @@ export default function ResumePage() {
 
           <div className="space-y-8 print:space-y-4">
             <div className="animate-fade-in" style={{ animationDelay: "75ms" }}>
-              <Summary summary={RESUME_DATA.summary} />
+              <WorkExperience work={RESUME_DATA.work} />
             </div>
             <div
               className="animate-fade-in"
               style={{ animationDelay: "150ms" }}
             >
-              <WorkExperience work={RESUME_DATA.work} />
+              <Projects projects={RESUME_DATA.projects} />
             </div>
             <div
               className="animate-fade-in"
@@ -100,22 +90,11 @@ export default function ResumePage() {
             >
               <Education education={RESUME_DATA.education} />
             </div>
-            <div
-              className="animate-fade-in"
-              style={{ animationDelay: "300ms" }}
-            >
-              <Skills skills={RESUME_DATA.skills} />
-            </div>
-            <div
-              className="animate-fade-in"
-              style={{ animationDelay: "375ms" }}
-            >
-              <Projects projects={RESUME_DATA.projects} />
-            </div>
           </div>
         </section>
 
         <nav className="print:hidden" aria-label="Quick navigation">
+          <ExportPdfButton />
           <CommandMenu links={getCommandMenuLinks()} />
         </nav>
       </main>

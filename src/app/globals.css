@@ -94,7 +94,16 @@
   animation: fadeIn 400ms ease-out both;
 }
 
+@page {
+  size: A4;
+  margin: 0;
+}
+
 @media print {
+  #main-content {
+    padding: 10mm !important;
+  }
+
   .animate-fade-in {
     animation: none !important;
     opacity: 1 !important;
