@@ -46,7 +46,7 @@ export const RESUME_DATA: ResumeData = {
       description: "",
       highlights: [
         "SDK 封装与资源管理：将自研 NPU 底层 C Runtime 封装为统一的 C++ SDK，屏蔽模型加载、输入输出 Buffer 管理、推理执行和资源释放等复杂调用顺序；使用 RAII 与智能指针管理模型、执行流和 Tensor/Image 对象生命周期，降低算法侧接入成本和资源泄漏风险。",
-        "异步推理接口开发：在同步推理接口之外实现 RunAsync 异步提交和结果轮询机制，使用 Lock-free Queue 管理输入任务与输出结果，结合 libgo 协程封装底层回调和阻塞等待，使业务侧可以用更简单的接口完成多路并发推理。",
+        "Stream 异步推理管道：封装面向 Stream 的异步 batch 管道，调用方按序 RunAsync 提交任务，libgo 提交协程按 FIFO 转交底层 C Runtime；针对 Runtime 多推理核可能乱序完成的问题，在 callback 后通过 submit_seq、原始完成队列、重排缓冲和 Ready 输出队列恢复顺序，保证 GetOutput 对外按提交序返回。",
         "跨语言无缝交付：基于 pybind11 完成 C++ 核心类、数据结构及异常捕获到 Python 模块的映射，降低上层算法与应用工程师的接入门槛。",
         "商业级交付验证：SDK 作为一体化解决方案的核心组件，成功交付至阿里云、小红书、高视科技等头部客户，并在内部算法日常压测及生产业务中持续稳定运行。",
       ],
