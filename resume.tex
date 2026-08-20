@@ -34,12 +34,16 @@
 
 \textbf{瀚博半导体}\period{2022/07 -- 2025/07}\\[-1pt]
 \textbf{项目一：自研 NPU 高性能推理 SDK 与 Python 绑定开发}\\[-1pt]
-\tags{C++ \quad CMake \quad pybind11 \quad libgo \quad Lock-free Queue \quad RAII}
+\tags{C++ \quad CMake \quad Python \quad pybind11 \quad NumPy Buffer Protocol \quad moodycamel \quad libgo \quad RAII}
+
+面向公司自研 NPU 芯片的推理接入需求，针对底层 C Runtime 接口原始、异步回调侵入性强及手动管理 Buffer 易泄漏等问题，基于 CMake 设计并实现跨语言 C++/Python 推理 SDK。将底层异步回调转换为拉取式结果接口，并提供与 NumPy 互通的 Pythonic API，为算法与应用团队提供高效、内存安全的推理开发套件。
 \begin{itemize}
-  \labelitem{架构抽象与资源管控}{针对底层 C 运行时接口原始、易泄漏的问题，基于 CMake 构建统一的 C++ SDK；运用 RAII 机制与智能指针对模型生命周期、执行流上下文及 Tensor/Image Buffer 进行全局纳管，杜绝内存泄漏与异常崩溃。}
-  \labelitem{高并发异步推理管道}{设计同步/异步双模推理接口，引入无锁队列消除多线程数据争用，结合 libgo 协程封装底层异步回调与阻塞等待逻辑，提供高吞吐的 RunAsync 与结果消费 Poller 机制。}
-  \labelitem{跨语言无缝交付}{基于 pybind11 完成 C++ 核心类、数据结构及异常捕获到 Python 模块的映射，降低上层算法与应用工程师的接入门槛。}
-  \labelitem{商业级交付验证}{SDK 作为一体化解决方案的核心组件，成功交付至阿里云、小红书、高视科技等头部客户，并在内部压测及生产业务中持续稳定运行。}
+  \labelitem{异步结果通道与拉取式接口}{接管 C Runtime completion callback，以 moodycamel 无锁并发队列作为跨线程结果通道，并通过 ProducerToken 优化回调路径；业务线程仅需调用 RunAsync() 提交任务，通过 GetOutput(timeout) 阻塞等待并拉取完整 batch 结果。}
+  \labelitem{回调解耦与异步调度}{回调函数仅负责组装 Result 并高效入队，与业务结果处理严格解耦；SDK 内部结合 libgo 承载异步调度基础设施，避免底层回调逻辑侵入上层业务代码。}
+  \labelitem{Buffer 生命周期安全闭环}{使用 RAII 与智能指针封装模型句柄、执行流上下文及 Tensor/Image Buffer，任务对象自动持有执行期间所需资源；设计 CloseInput() \(\rightarrow\) 持续 GetOutput() 至 EOF \(\rightarrow\) WaitUntilDone() 的收尾状态机，待 Runtime 回调静止、消费端退出后再销毁队列与上下文，规避悬垂指针和内存泄漏。}
+  \labelitem{Pythonic 跨语言封装}{基于 pybind11 封装 C++ 类、上下文与推理生命周期，提供上下文管理器 with、流式迭代和异常映射，为上层应用屏蔽底层并发与内存管理细节。}
+  \labelitem{NumPy 互通与并发安全}{基于 Python Buffer Protocol 实现 Tensor Buffer 与 numpy.ndarray 的零拷贝/低开销互通；在 GetOutput() 阻塞路径显式释放 GIL（py::gil\_scoped\_release），避免阻塞 Python 主线程及并发业务逻辑。}
+  \labelitem{商业级交付验证}{SDK 作为一体化解决方案核心组件，交付至阿里云、小红书、高视科技等客户，并在内部算法压测及生产业务中持续运行。}
 \end{itemize}
 
 \vspace{2pt}
