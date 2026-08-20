@@ -1,5 +1,5 @@
 \documentclass[9pt,a4paper]{ctexart}
-\usepackage[margin=9mm]{geometry}
+\usepackage[margin=13mm]{geometry}
 \usepackage{enumitem,hyperref,tabularx,xcolor,titlesec}
 \usepackage{fontspec}
 
@@ -9,15 +9,16 @@
 \pagestyle{empty}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
-\setlist[itemize]{leftmargin=1.2em,itemsep=0pt,topsep=1pt,parsep=0pt,partopsep=0pt}
-\titleformat{\section}{\bfseries\fontsize{13}{14}\selectfont}{}{0pt}{}[\vspace{-2pt}\titlerule]
-\titlespacing*{\section}{0pt}{5pt}{3pt}
+\setlist[itemize,1]{leftmargin=1.35em,itemsep=3pt,topsep=3pt,parsep=0pt,partopsep=0pt}
+\setlist[itemize,2]{leftmargin=1.45em,itemsep=2pt,topsep=2pt,parsep=0pt,partopsep=0pt,label=--}
+\titleformat{\section}{\bfseries\fontsize{14}{16}\selectfont}{}{0pt}{}[\vspace{-1pt}\titlerule]
+\titlespacing*{\section}{0pt}{8pt}{5pt}
 \newcommand{\period}[1]{\hfill\textcolor{gray}{\small #1}}
 \newcommand{\tags}[1]{\textcolor{black!75}{\footnotesize #1}}
 \newcommand{\labelitem}[2]{\item \textbf{#1：}#2}
 
 \begin{document}
-\fontsize{9.2}{11.2}\selectfont
+\fontsize{10.2}{13.2}\selectfont
 
 \begin{tabularx}{\textwidth}{@{}Xr@{}}
   {\fontsize{22}{24}\selectfont\bfseries CHZarles} &
@@ -38,14 +39,25 @@
 
 面向公司自研 NPU 芯片的推理接入需求，针对底层 C Runtime 接口原始、异步回调侵入性强及手动管理 Buffer 易泄漏等问题，基于 CMake 设计并实现跨语言 C++/Python 推理 SDK。将底层异步回调转换为拉取式结果接口，并提供与 NumPy 互通的 Pythonic API，为算法与应用团队提供高效、内存安全的推理开发套件。
 \begin{itemize}
-  \labelitem{异步结果通道与拉取式接口}{接管 C Runtime completion callback，以 moodycamel 无锁并发队列作为跨线程结果通道，并通过 ProducerToken 优化回调路径；业务线程仅需调用 RunAsync() 提交任务，通过 GetOutput(timeout) 阻塞等待并拉取完整 batch 结果。}
-  \labelitem{回调解耦与异步调度}{回调函数仅负责组装 Result 并高效入队，与业务结果处理严格解耦；SDK 内部结合 libgo 承载异步调度基础设施，避免底层回调逻辑侵入上层业务代码。}
-  \labelitem{Buffer 生命周期安全闭环}{使用 RAII 与智能指针封装模型句柄、执行流上下文及 Tensor/Image Buffer，任务对象自动持有执行期间所需资源；设计 CloseInput() \(\rightarrow\) 持续 GetOutput() 至 EOF \(\rightarrow\) WaitUntilDone() 的收尾状态机，待 Runtime 回调静止、消费端退出后再销毁队列与上下文，规避悬垂指针和内存泄漏。}
-  \labelitem{Pythonic 跨语言封装}{基于 pybind11 封装 C++ 类、上下文与推理生命周期，提供上下文管理器 with、流式迭代和异常映射，为上层应用屏蔽底层并发与内存管理细节。}
-  \labelitem{NumPy 互通与并发安全}{基于 Python Buffer Protocol 实现 Tensor Buffer 与 numpy.ndarray 的零拷贝/低开销互通；在 GetOutput() 阻塞路径显式释放 GIL（py::gil\_scoped\_release），避免阻塞 Python 主线程及并发业务逻辑。}
+  \item \textbf{异步结果通道与拉取式接口（moodycamel 无锁队列）}
+    \begin{itemize}
+      \item 接管底层 C Runtime 的侵入式 completion callback，将其封装为业务友好的拉取式接口；业务线程仅需通过 RunAsync() 提交任务，通过 GetOutput(timeout) 阻塞等待并拉取完整 batch 结果。
+      \item 引入 moodycamel 无锁并发队列作为跨线程结果移交通道，通过 ProducerToken 优化回调路径的入队性能；回调函数仅负责组装 Result 并高效入队，与业务结果处理严格解耦，SDK 内部结合 libgo 承载异步调度基础设施。
+    \end{itemize}
+  \item \textbf{Buffer 封装与生命周期安全闭环（RAII）}
+    \begin{itemize}
+      \item 使用 RAII 与智能指针封装底层 raw pointer，统一管理模型句柄、执行流上下文及 Tensor/Image 输入输出 Buffer；任务对象自动持有执行期间所需的全部底层资源。
+      \item 建立 CloseInput() \(\rightarrow\) 持续 GetOutput() 至 EOF \(\rightarrow\) WaitUntilDone() 的收尾状态机，确保 Runtime 回调完全静止且消费端不再访问后，才销毁队列与上下文，规避悬垂指针和内存泄漏。
+    \end{itemize}
+  \item \textbf{Pythonic 跨语言封装与 NumPy 深度互通（pybind11）}
+    \begin{itemize}
+      \item 基于 pybind11 封装 C++ 类、上下文与推理生命周期，提供上下文管理器 with、流式迭代及异常映射，为上层应用屏蔽底层并发与内存管理细节。
+      \item 基于 Python Buffer Protocol 实现 Tensor Buffer 与 numpy.ndarray 的零拷贝/低开销互通，算法侧可直接传入 NumPy 矩阵并获取 NumPy 格式的推理结果。
+      \item 在 GetOutput() 阻塞路径显式释放 GIL（py::gil\_scoped\_release），避免阻塞 Python 主线程及并发业务逻辑；将 C++ 底层错误统一转换为标准 Python 异常。
+    \end{itemize}
 \end{itemize}
 
-\vspace{2pt}
+\vspace{4pt}
 \textbf{瀚博半导体}\period{2022/07 -- 2025/07}\\[-1pt]
 \textbf{项目二：端到端 AI 业务管线构建}\\[-1pt]
 \tags{Python \quad C++ \quad MediaPipe \quad OpenCV \quad PyTorch \quad YOLOv8}
@@ -56,6 +68,7 @@
   \labelitem{工程文档与交付支持}{编写端到端调用范例与接入文档，协助业务团队及外部客户快速完成算法接入和问题排查。}
 \end{itemize}
 
+\newpage
 \section*{项目经历}
 
 \textbf{PaperLoom 论文智能阅读与可溯源问答系统}
@@ -72,9 +85,11 @@
 
 \section*{教育经历}
 
+{\small
 \begin{tabularx}{\textwidth}{@{}Xr@{}}
   \textbf{澳门大学} \quad 人工智能 · 硕士 & \textcolor{gray}{2025/08 -- 2027/06}\\[2pt]
   \textbf{中国矿业大学} \quad 计算机科学与技术 · 本科，GPA: 87/100，专业排名：26/139 & \textcolor{gray}{2018/09 -- 2022/07}
 \end{tabularx}
+}
 
 \end{document}
