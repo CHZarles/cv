@@ -37,27 +37,29 @@
 \textbf{项目一：自研 NPU 高性能推理 SDK 与 Python 绑定开发}\\[-1pt]
 \tags{C++ \quad CMake \quad Python \quad pybind11 \quad NumPy Buffer Protocol \quad moodycamel \quad libgo \quad RAII}
 
-面向公司自研 NPU 芯片的推理接入需求，针对底层 C Runtime 接口原始、异步回调侵入性强及手动管理 Buffer 易泄漏等问题，基于 CMake 设计并实现跨语言 C++/Python 推理 SDK。将底层异步回调转换为拉取式结果接口，并提供与 NumPy 互通的 Pythonic API，为算法与应用团队提供高效、内存安全的推理开发套件。
+\textbf{项目描述：}面向公司自研 NPU 芯片的推理接入需求，针对底层 C 运行时接口原始、异步回调侵入性强以及手动管理 Buffer 易泄漏等问题，基于 CMake 设计并实现了跨语言 C++/Python 推理 SDK。将底层异步回调转换为拉取式结果接口，并提供与 NumPy 无缝互通的 Pythonic 接口，为算法与应用团队提供高效、内存安全的推理开发套件。
+
+\textbf{核心职责与实现：}
 \begin{itemize}
   \item \textbf{异步结果通道与拉取式接口（moodycamel 无锁队列）}
     \begin{itemize}
-      \item 接管底层 C Runtime 的侵入式 completion callback，将其封装为业务友好的拉取式接口；业务线程仅需通过 RunAsync() 提交任务，通过 GetOutput(timeout) 阻塞等待并拉取完整 batch 结果。
-      \item 引入 moodycamel 无锁并发队列作为跨线程结果移交通道，通过 ProducerToken 优化回调路径的入队性能；回调函数仅负责组装 Result 并高效入队，与业务结果处理严格解耦，SDK 内部结合 libgo 承载异步调度基础设施。
+      \item 接管底层 C Runtime 的侵入式 completion callback，将其封装为业务友好的拉取式（Pull-based）接口；业务线程仅需通过 RunAsync() 提交任务、GetOutput(timeout) 阻塞等待并拉取完整 batch 结果。
+      \item 引入 moodycamel 无锁并发队列（Lock-free Queue）作为跨线程结果移交通道，通过 ProducerToken 优化回调路径的入队性能；回调函数仅负责组装 Result 并高效入队，与业务结果处理严格解耦，SDK 内部结合 libgo 承载异步调度基础设施。
     \end{itemize}
   \item \textbf{Buffer 封装与生命周期安全闭环（RAII）}
     \begin{itemize}
-      \item 使用 RAII 与智能指针封装底层 raw pointer，统一管理模型句柄、执行流上下文及 Tensor/Image 输入输出 Buffer；任务对象自动持有执行期间所需的全部底层资源。
-      \item 建立 CloseInput() \(\rightarrow\) 持续 GetOutput() 至 EOF \(\rightarrow\) WaitUntilDone() 的收尾状态机，确保 Runtime 回调完全静止且消费端不再访问后，才销毁队列与上下文，规避悬垂指针和内存泄漏。
+      \item 全面运用 RAII 机制与智能指针封装底层 raw pointer，统一管理模型句柄、执行流上下文及输入输出 Buffer（Tensor / Image）的生命周期，任务对象自动持有执行期间所需的全部底层资源。
+      \item 建立严格的关闭与收尾契约：实现 CloseInput() \(\rightarrow\) 持续 GetOutput() 至 EOF \(\rightarrow\) WaitUntilDone() 的流转状态机，确保底层 Runtime 回调完全静止且消费端不再访问后，才安全销毁队列与上下文，彻底杜绝悬垂指针与内存泄漏。
     \end{itemize}
   \item \textbf{Pythonic 跨语言封装与 NumPy 深度互通（pybind11）}
     \begin{itemize}
-      \item 基于 pybind11 封装 C++ 类、上下文与推理生命周期，提供上下文管理器 with、流式迭代及异常映射，为上层应用屏蔽底层并发与内存管理细节。
-      \item 基于 Python Buffer Protocol 实现 Tensor Buffer 与 numpy.ndarray 的零拷贝/低开销互通，算法侧可直接传入 NumPy 矩阵并获取 NumPy 格式的推理结果。
-      \item 在 GetOutput() 阻塞路径显式释放 GIL（py::gil\_scoped\_release），避免阻塞 Python 主线程及并发业务逻辑；将 C++ 底层错误统一转换为标准 Python 异常。
+      \item 基于 pybind11 将 C++ 类、上下文与推理生命周期封装为符合 Python 习惯的接口，支持上下文管理器 with、流式迭代及异常映射，为上层应用屏蔽底层并发与内存细节。
+      \item 基于 Python Buffer 协议实现 C++ Tensor Buffer 与 numpy.ndarray 的零拷贝/低开销数据互通，算法侧可直接传入 NumPy 矩阵作为模型输入并直接获取 NumPy 格式的推理结果。
+      \item 在 C++ 的 GetOutput() 阻塞等待路径上显式释放 GIL（py::gil\_scoped\_release），避免阻塞 Python 主线程与并发业务逻辑；将 C++ 底层错误统一转换为标准的 Python 异常体系。
     \end{itemize}
 \end{itemize}
 
-\vspace{4pt}
+\newpage
 \textbf{瀚博半导体}\period{2022/07 -- 2025/07}\\[-1pt]
 \textbf{项目二：端到端 AI 业务管线构建}\\[-1pt]
 \tags{Python \quad C++ \quad MediaPipe \quad OpenCV \quad PyTorch \quad YOLOv8}
@@ -68,7 +70,6 @@
   \labelitem{工程文档与交付支持}{编写端到端调用范例与接入文档，协助业务团队及外部客户快速完成算法接入和问题排查。}
 \end{itemize}
 
-\newpage
 \section*{项目经历}
 
 \textbf{PaperLoom 论文智能阅读与可溯源问答系统}
