@@ -60,7 +60,6 @@ export const RESUME_DATA: ResumeData = {
         "Buffer 生命周期安全闭环：使用 RAII 与智能指针封装模型句柄、执行流上下文及 Tensor/Image Buffer，任务对象自动持有执行期间所需资源；设计 CloseInput() -> 持续 GetOutput() 至 EOF -> WaitUntilDone() 的收尾状态机，待 Runtime 回调静止、消费端退出后再销毁队列与上下文，规避悬垂指针和内存泄漏。",
         "Pythonic 跨语言封装：基于 pybind11 封装 C++ 类、上下文与推理生命周期，提供上下文管理器 with、流式迭代和异常映射，为上层应用屏蔽底层并发与内存管理细节。",
         "NumPy 互通与并发安全：基于 Python Buffer Protocol 实现 Tensor Buffer 与 numpy.ndarray 的零拷贝/低开销互通；在 GetOutput() 阻塞路径显式释放 GIL（py::gil_scoped_release），避免阻塞 Python 主线程及并发业务逻辑。",
-        "商业级交付验证：SDK 作为一体化解决方案核心组件，交付至阿里云、小红书、高视科技等客户，并在内部算法压测及生产业务中持续运行。",
       ],
     },
     {
