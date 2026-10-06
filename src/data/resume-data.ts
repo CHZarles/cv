@@ -32,7 +32,7 @@ export const RESUME_DATA: ResumeData = {
   ],
   work: [
     {
-      company: "暨南大学智科院 × 浙江省文成县",
+      company: "暨南大学智科院",
       link: "",
       badges: ["MQTT", "DJI", "Redis", "WebSocket", "MediaPipe", "3DGS"],
       title: "3DGS 低空算法平台底座 · 后端开发",
