@@ -6,6 +6,7 @@ import { generateResumeStructuredData } from "@/lib/structured-data";
 import { Education } from "./components/education";
 import { Header } from "./components/header";
 import { Projects } from "./components/projects";
+import { Skills } from "./components/skills";
 import { WorkExperience } from "./components/work-experience";
 
 export const metadata: Metadata = {
@@ -89,6 +90,12 @@ export default function ResumePage() {
               style={{ animationDelay: "225ms" }}
             >
               <Education education={RESUME_DATA.education} />
+            </div>
+            <div
+              className="animate-fade-in"
+              style={{ animationDelay: "300ms" }}
+            >
+              <Skills skills={RESUME_DATA.skills} />
             </div>
           </div>
         </section>

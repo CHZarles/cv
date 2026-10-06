@@ -155,7 +155,7 @@ export function Projects({ projects }: ProjectsProps) {
   return (
     <Section className="scroll-mb-16">
       <h2 className="text-xl font-bold" id="side-projects">
-        Side projects
+        个人项目
       </h2>
       <div
         className="space-y-4 print:space-y-1"

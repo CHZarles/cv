@@ -66,7 +66,7 @@ export function Education({ education }: EducationListProps) {
   return (
     <Section>
       <h2 className="text-xl font-bold" id="education-section">
-        Education
+        教育经历
       </h2>
       <div
         className="space-y-4"
