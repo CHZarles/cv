@@ -47,7 +47,7 @@ export const RESUME_DATA: ResumeData = {
     },
     {
       company: "瀚博半导体 · 独角兽企业",
-      link: "https://www.vastai.com.cn/",
+      link: "https://www.vastaitech.com/",
       badges: [
         "C++",
         "Python",
