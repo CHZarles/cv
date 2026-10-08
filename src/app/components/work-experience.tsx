@@ -115,9 +115,9 @@ function WorkExperienceItem({ work }: WorkExperienceItemProps) {
   } = work;
 
   return (
-    <Card className="border-none py-1 print:py-0">
-      <CardHeader className="print:space-y-1">
-        <div className="flex items-center justify-between gap-x-2 text-base">
+    <Card className="border-slate-200 p-4 shadow-sm print:border-none print:p-0 print:shadow-none md:p-5">
+      <CardHeader className="gap-y-2 print:space-y-1">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-x-3">
           <h3 className="inline-flex items-center gap-x-2 font-semibold leading-none">
             <CompanyLink company={company} link={link} />
             {employmentType && (
@@ -132,17 +132,21 @@ function WorkExperienceItem({ work }: WorkExperienceItemProps) {
           <WorkPeriod start={start} end={end} />
         </div>
 
-        <h4 className="font-mono text-sm font-semibold leading-none">
+        <h4 className="text-sm font-semibold leading-snug text-slate-700 dark:text-slate-200">
           {title}
         </h4>
         <BadgeList className="flex-wrap gap-1" badges={badges} />
       </CardHeader>
 
-      <CardContent>
-        <div className="mt-2 text-xs text-foreground/80 print:mt-1 print:text-[10px] text-pretty">
-          {description && <HighlightLabel text={description} />}
+      <CardContent className="font-sans">
+        <div className="mt-4 text-[13px] leading-6 text-foreground/75 print:mt-1 print:text-[10px] print:leading-normal md:leading-7">
+          {description && (
+            <p className="rounded-md border-l-2 border-slate-300 bg-slate-50 px-3 py-2 text-foreground/65 print:border-none print:bg-transparent print:p-0">
+              <HighlightLabel text={description} />
+            </p>
+          )}
           {highlights && highlights.length > 0 && (
-            <ul className="list-inside list-disc">
+            <ul className="mt-4 list-disc space-y-2 pl-5 marker:text-slate-400 print:mt-1 print:space-y-0 md:space-y-3">
               {highlights.map((highlight) => (
                 <li key={highlight}>
                   <HighlightLabel text={highlight} />
@@ -167,11 +171,14 @@ interface WorkExperienceProps {
 export function WorkExperience({ work }: WorkExperienceProps) {
   return (
     <Section>
-      <h2 className="text-xl font-bold" id="work-experience">
+      <h2
+        className="border-b border-slate-200 pb-2 text-xl font-bold tracking-tight"
+        id="work-experience"
+      >
         工作经历
       </h2>
       <div
-        className="space-y-4 print:space-y-1"
+        className="space-y-5 print:space-y-1"
         role="feed"
         aria-labelledby="work-experience"
       >

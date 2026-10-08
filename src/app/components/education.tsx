@@ -65,7 +65,10 @@ interface EducationListProps {
 export function Education({ education }: EducationListProps) {
   return (
     <Section>
-      <h2 className="text-xl font-bold" id="education-section">
+      <h2
+        className="border-b border-slate-200 pb-2 text-xl font-bold tracking-tight"
+        id="education-section"
+      >
         教育经历
       </h2>
       <div

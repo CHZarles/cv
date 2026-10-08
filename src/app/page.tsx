@@ -60,7 +60,7 @@ export default function ResumePage() {
         }}
       />
       <main
-        className="container relative mx-auto scroll-my-12 overflow-auto p-4 print:p-0 md:p-16"
+        className="container relative mx-auto scroll-my-12 overflow-auto px-4 py-8 print:p-0 md:px-10 md:py-14"
         id="main-content"
       >
         <div className="sr-only">
@@ -68,14 +68,14 @@ export default function ResumePage() {
         </div>
 
         <section
-          className="mx-auto w-full max-w-2xl space-y-8 bg-white print:space-y-4 dark:bg-background"
+          className="mx-auto w-full max-w-4xl space-y-10 rounded-2xl bg-white p-5 shadow-sm print:space-y-4 print:p-0 print:shadow-none dark:bg-background md:p-10"
           aria-label="Resume Content"
         >
           <div className="animate-fade-in" style={{ animationDelay: "0ms" }}>
             <Header />
           </div>
 
-          <div className="space-y-8 print:space-y-4">
+          <div className="space-y-10 print:space-y-4">
             <div className="animate-fade-in" style={{ animationDelay: "75ms" }}>
               <WorkExperience work={RESUME_DATA.work} />
             </div>
