@@ -105,7 +105,7 @@ export const RESUME_DATA: ResumeData = {
   ],
   projects: [
     {
-      title: "PaperLoom 科研文献智能检索工具",
+      title: "PaperLoom 文献检索与精读 Agent",
       techStack: [
         "OpenAI SDK",
         "Agent Harness",
