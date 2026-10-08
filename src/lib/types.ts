@@ -32,6 +32,7 @@ export interface ResumeData {
   }>;
   work: Array<{
     company: string;
+    employmentType?: string;
     link: string;
     badges: string[];
     title: string;

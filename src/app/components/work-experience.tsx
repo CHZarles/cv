@@ -102,15 +102,32 @@ interface WorkExperienceItemProps {
  * Handles responsive layout for badges (mobile/desktop)
  */
 function WorkExperienceItem({ work }: WorkExperienceItemProps) {
-  const { company, link, badges, title, start, end, description, highlights } =
-    work;
+  const {
+    company,
+    employmentType,
+    link,
+    badges,
+    title,
+    start,
+    end,
+    description,
+    highlights,
+  } = work;
 
   return (
     <Card className="border-none py-1 print:py-0">
       <CardHeader className="print:space-y-1">
         <div className="flex items-center justify-between gap-x-2 text-base">
-          <h3 className="inline-flex items-center justify-center gap-x-1 font-semibold leading-none">
+          <h3 className="inline-flex items-center gap-x-2 font-semibold leading-none">
             <CompanyLink company={company} link={link} />
+            {employmentType && (
+              <Badge
+                variant="secondary"
+                className="px-1.5 py-0 text-[10px] font-medium text-muted-foreground"
+              >
+                {employmentType}
+              </Badge>
+            )}
           </h3>
           <WorkPeriod start={start} end={end} />
         </div>
