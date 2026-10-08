@@ -32,7 +32,7 @@ export const RESUME_DATA: ResumeData = {
   ],
   work: [
     {
-      company: "暨南大学智科院",
+      company: "暨南大学智科院 · 实习",
       link: "",
       badges: ["MQTT", "DJI", "Redis", "WebSocket", "MediaPipe", "3DGS"],
       title: "3DGS 低空算法平台底座 · 后端开发",
@@ -46,7 +46,7 @@ export const RESUME_DATA: ResumeData = {
       ],
     },
     {
-      company: "瀚博半导体 · 独角兽企业",
+      company: "瀚博半导体 · 正式工作",
       link: "https://www.vastaitech.com/",
       badges: [
         "C++",
